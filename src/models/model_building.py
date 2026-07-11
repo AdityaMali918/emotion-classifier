@@ -1,11 +1,28 @@
 import pickle
 import yaml
+import logging
 
 import numpy as np
 import pandas as pd
 
 from sklearn.ensemble import GradientBoostingClassifier
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
+formatter = logging.Formatter(
+    "%(asctime)s - %(levelname)s - %(name)s - %(message)s"
+)
+
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.INFO)
+console_handler.setFormatter(formatter)
+logger.addHandler(console_handler)
+
+file_handler = logging.FileHandler(r"D:\NEW_PROJECTS\mlops\emotion-classifier\logger\logs\running.log", mode="a")
+file_handler.setLevel(logging.ERROR)
+file_handler.setFormatter(formatter)
+logger.addHandler(file_handler)
 
 def load_params(params_path = "params.yaml"):
     params = yaml.safe_load(open(params_path, "r"))['model_building']
@@ -29,13 +46,19 @@ def training_model(X_train, y_train, params):
 
 # save
 def save_model(clf):
-    pickle.dump(clf, open('model.pkl','wb'))
+    pickle.dump(clf, open('.\model\model.pkl','wb'))
 
 def main():
-    X_train, y_train = load_data(r"D:\NEW_PROJECTS\mlops\data\features\train_features.csv")
-    params = load_params(params_path="params.yaml")
-    model =  training_model(X_train, y_train, params)
-    save_model(model)
+    try:
+        logger.info("Training started")
+        X_train, y_train = load_data(r".\data\interim\train_features.csv")
+        params = load_params(params_path="params.yaml")
+        model =  training_model(X_train, y_train, params)
+        save_model(model)
+        logger.info("Training completed")
+    except Exception as e:
+        logger.error("Error while training: ",e)  
+        raise  
 
 if __name__ == "__main__":
     main()

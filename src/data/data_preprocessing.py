@@ -2,13 +2,32 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 
-from src.logger import logger
+import logging
 
 import re
 import nltk
 import string
 from nltk.corpus import stopwords
 from nltk.stem import SnowballStemmer, WordNetLemmatizer
+
+# logger
+# from src.logger import logger
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
+formatter = logging.Formatter(
+    "%(asctime)s - %(levelname)s - %(name)s - %(message)s"
+)
+
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.INFO)
+console_handler.setFormatter(formatter)
+logger.addHandler(console_handler)
+
+file_handler = logging.FileHandler(r"D:\NEW_PROJECTS\mlops\emotion-classifier\logger\logs\running.log", mode="a")
+file_handler.setLevel(logging.ERROR)
+file_handler.setFormatter(formatter)
+logger.addHandler(file_handler)
 
 # fetch the data from raw data
 
@@ -94,7 +113,7 @@ def save_data(train_processed_data, test_processed_data):
     try:
         file_path = Path(__file__).parent.parent
 
-        data_path = Path(file_path,"data", "processed")
+        data_path = Path(".","data", "processed")
 
         data_path.mkdir(parents=True, exist_ok=True)
 

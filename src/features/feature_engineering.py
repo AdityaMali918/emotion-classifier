@@ -2,8 +2,26 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 import yaml
+import logging
 
 from sklearn.feature_extraction.text import CountVectorizer
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
+formatter = logging.Formatter(
+    "%(asctime)s - %(levelname)s - %(name)s - %(message)s"
+)
+
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.INFO)
+console_handler.setFormatter(formatter)
+logger.addHandler(console_handler)
+
+file_handler = logging.FileHandler(r"D:\NEW_PROJECTS\mlops\emotion-classifier\logger\logs\running.log", mode="a")
+file_handler.setLevel(logging.ERROR)
+file_handler.setFormatter(formatter)
+logger.addHandler(file_handler)
 
 def load_params(param_path = "params.yaml"):
     max_features = yaml.safe_load(open(param_path, "r"))['feature_engineering']['max_features']
@@ -49,22 +67,28 @@ def feature_engieer(train_data, test_data , max_features):
     return train_df, test_df
 
 def save_data(train_df, test_df):
-    file_path = Path(__file__).parent.parent
+    try :
 
-    data_path = Path(file_path,"data", "features")
 
-    data_path.mkdir(parents=True, exist_ok=True)
+        data_path = Path(".","data", "interim")
 
-    train_df.to_csv(data_path / "train_features.csv", index=False)
-    test_df.to_csv(data_path / "test_features.csv", index=False)
+        data_path.mkdir(parents=True, exist_ok=True)
+
+        train_df.to_csv(data_path / "train_features.csv", index=False)
+        test_df.to_csv(data_path / "test_features.csv", index=False)
+
+    except Exception as e:
+         logger.error("Feature data not saved : ", e)
+         raise
 
 
 def main(params_path, train_path, test_path):
-       
+       logger.info("----------Feature Extraction Started------------")
        max_features = load_params(params_path)
        train_data, test_data = load_data(train_path, test_path)
        train_df, test_df = feature_engieer(train_data, test_data, max_features=max_features)
        save_data(train_df, test_df)
+       logger.info("----------Feature Extraction Finished------------")
 
 if __name__ == "__main__":
        PARAMS_PATH = "params.yaml"

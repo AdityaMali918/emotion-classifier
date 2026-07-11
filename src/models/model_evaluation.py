@@ -3,9 +3,27 @@ import pandas as pd
 
 import pickle
 import json
+import logging
 
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import precision_score, recall_score, roc_auc_score
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
+formatter = logging.Formatter(
+    "%(asctime)s - %(levelname)s - %(name)s - %(message)s"
+)
+
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.INFO)
+console_handler.setFormatter(formatter)
+logger.addHandler(console_handler)
+
+file_handler = logging.FileHandler(r"D:\NEW_PROJECTS\mlops\emotion-classifier\logger\logs\running.log", mode="a")
+file_handler.setLevel(logging.ERROR)
+file_handler.setFormatter(formatter)
+logger.addHandler(file_handler)
 
 def load_model(model_path: str):
     clf = pickle.load(open(model_path,'rb'))
@@ -40,14 +58,18 @@ def save_metrics(metrics_dict, save_data_path):
         json.dump(metrics_dict, file, indent=4)
 
 def main(model_path, save_data_path, test_data_path):
-    
-
-    model = load_model(model_path)
-    metrics = evaluate(model, test_data_path)
-    save_metrics(metrics,save_data_path)
+    try : 
+        logging.info("Evaluation started")
+        model = load_model(model_path)
+        metrics = evaluate(model, test_data_path)
+        save_metrics(metrics,save_data_path)
+        logging.info("Evaluation Completed")
+    except Exception as e:
+        logger.error("Eroor occured while evaluation:",e)    
+        raise
 
 if __name__ == "__main__":
-    model_path = r"model.pkl"
-    save_data_path = r"metrics.json"
-    test_data_path = r'./data/features/test_features.csv'
+    model_path = r"./model/model.pkl"
+    save_data_path = r"reports/metrics.json"
+    test_data_path = r'./data/interim/test_features.csv'
     main(model_path, save_data_path, test_data_path)    
