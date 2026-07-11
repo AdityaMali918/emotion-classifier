@@ -1,0 +1,36 @@
+ 1. dvc add stage
+ -n name
+ -d dependency
+ -p parmeter
+ -o data/raw
+
+
+ YAML - YAML aint a markup language
+ 1. More readable
+ 2. more data types
+ 3. comments
+
+
+COMMAND : dvc stage add -n data_ingestion -d src/data_ingestion.py -o data/raw python src/data_ingestion.py
+
+ eg:
+ stages:
+    data_ingestion
+        cmd: python src/data.py
+        deps:
+        - src/data.py
+        outs:
+        - data/raw
+
+2. Run this dvc.yaml file  -> dvc repro  (reproduce)
+
+3. dvc dag -> Is used to visualize the steps (directed acyclic graph)
+
+4. dvc stage add -n data_preprocessing -d data/raw -d src/data_preprocessing.py -o data/processed --force python src/data_preprocessing.py
+
+5. --metrics is used show the metrics of the file
+   dvc metrics show
+   dvc stage add -n model_evaluation -d src/model_evaluation.py -d model.pkl --metrics metrics.json --force python src/model_evaluation.p
+
+6. pip install cookiecutter
+cookiecutter https://github.com/drivendataorg/cookiecutter-data-science   
