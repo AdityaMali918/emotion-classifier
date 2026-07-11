@@ -1,0 +1,4 @@
+[core]
+    remote = version_data
+['remote "version_data"']
+    url = D:\NEW_PROJECTS\mlops\emotion-classifier\data\version_data

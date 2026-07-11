@@ -34,3 +34,52 @@ COMMAND : dvc stage add -n data_ingestion -d src/data_ingestion.py -o data/raw p
 
 6. pip install cookiecutter
 cookiecutter https://github.com/drivendataorg/cookiecutter-data-science   
+
+7. git tag
+git tag -a v1.0 -m "Release v1 with BOW"
+git push origin main
+git push origin v1.0
+git tag
+git show v1.0
+
+8. git checkout tags/v1.0
+
+9.
+ 1. git init 
+ 2. dvc init
+      .dvc 
+         temp
+         config
+         .gitignore
+      .dvcignore   
+
+ 3. dvc remote add -d name storagepath eg(D://data)        
+
+10 dvc add data/customer.csv (multiple thing are happening here)   
+
+11. dvc push
+
+steps : 
+   1. new data added
+   2. dvc add data/customer.csv
+   3. git add . 
+   4. git commit -u "Added the data"
+   5. dvc push
+   6. git push -u origin main 
+
+12 changing code and data
+   First do 1. git checkout hashkey
+   Second do 2. dvc checkout (Be carefull you have to do this as the data will remain previous commit)   
+
+13 if somebody else start working on our repository then
+
+1. git clone
+2. dvc fetch 
+3. dvc checkout
+
+If somebodywant to switch between version
+1. git checkout task
+2. dvc fetch
+3. dvc checkout 
+
+dvc pull = dvc checkout + dvc pull
