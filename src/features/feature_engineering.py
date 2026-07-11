@@ -4,7 +4,7 @@ from pathlib import Path
 import yaml
 import logging
 
-from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -38,8 +38,7 @@ def load_data(train_path, test_path):
 
 
 def feature_engieer(train_data, test_data , max_features):
-# appy bog
-
+# appy TFIDF
     
     X_train = train_data['content'].values
     y_train = train_data['sentiment'].values
@@ -48,19 +47,19 @@ def feature_engieer(train_data, test_data , max_features):
     y_test = test_data['sentiment'].values
 
     # Apply Bag of Words (CountVectorizer)
-    vectorizer = CountVectorizer(max_features=max_features)
+    vectorizer = TfidfVectorizer(max_features=max_features)
 
     # Fit the vectorizer on the training data and transform it
-    X_train_bow = vectorizer.fit_transform(X_train)
+    X_train_tfidf = vectorizer.fit_transform(X_train)
 
     # Transform the test data using the same vectorizer
-    X_test_bow = vectorizer.transform(X_test)
+    X_test_tfidf = vectorizer.transform(X_test)
 
-    train_df = pd.DataFrame(X_train_bow.toarray())
+    train_df = pd.DataFrame(X_train_tfidf.toarray())
 
     train_df['label'] = y_train
 
-    test_df = pd.DataFrame(X_test_bow.toarray())
+    test_df = pd.DataFrame(X_test_tfidf.toarray())
 
     test_df['label'] = y_test
 
